@@ -114,8 +114,8 @@ class Item(models.Model):
 		choices=MEDIA_TYPE_CHOICES,
 	)	
 	catalog_id = models.CharField(max_length=50)
-	isbn = models.CharField(max_length=50, blank=True, null=True)
-	upc = models.CharField(max_length=50, blank=True, null=True)
+	isbn = models.CharField(max_length=13, blank=True, null=True)
+	upc = models.CharField(max_length=12, blank=True, null=True)
 	condition = models.CharField(max_length=50, blank=True, null=True)
 	aquisition_date = models.DateTimeField(auto_now_add=True)
 	last_modified_date = models.DateTimeField(auto_now=True, null=True)
@@ -124,6 +124,7 @@ class Item(models.Model):
 	authors = models.ManyToManyField(Author, blank=True)
 	shelf_location = models.CharField(max_length=50, blank=True, null=True)
 	publication_date = models.DateField(blank=True, null=True)
+	lost = models.BooleanField(default=False)
 	api_link = models.CharField(max_length=150, blank=True, null=True)
 
 	def __str__(self):
