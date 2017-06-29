@@ -6,6 +6,9 @@ TITLE: {{ item.title }}<br>
 	{{ author.author_type }} : {{ author.author_name }}<br>
 {% endfor %}
 MEDIA TYPE: {{ item.media_type }}<br>
+{% for checkout in checkouts %}
+	CHECKED OUT TO: {{ checkout.patron.patron_name }} (due date: {{ checkout.due_date }})<br>
+{% endfor %}
 </p>
 
 {% else %}

@@ -18,5 +18,6 @@ def browse(request):
 	
 def item_record(request, item_id):
 	item = get_object_or_404(Item, pk=item_id)
-	context = {'item': item}
+	checkouts = CheckOut.objects.filter(item_id=item_id).filter(check_in_date__isnull=True)
+	context = {'item': item, 'checkouts': checkouts}
 	return render(request, 'catalog/item.html', context)

@@ -3,7 +3,7 @@
 <ul>
 	{% for item in item_list %}
 	<li>
-	<a href="/catalog/item/{{ item.id }}">{{ item }}</a>
+	<a href="{% url 'item_record' item.id %}">{{ item }}</a>
 	</li>
 	{% endfor %}
 </ul>
