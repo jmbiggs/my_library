@@ -1,0 +1,15 @@
+{% if item_list %}
+
+<ul>
+	{% for item in item_list %}
+	<li>
+	<a href="/catalog/item/{{ item.id }}">{{ item }}</a>
+	</li>
+	{% endfor %}
+</ul>
+
+{% else %}
+
+<p>There appear to be no items currently in the system.</p>
+
+{% endif %}

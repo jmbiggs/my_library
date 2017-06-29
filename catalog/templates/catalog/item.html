@@ -1,0 +1,15 @@
+{% if item %}
+
+<p>ID: {{ item.id }}<br>
+TITLE: {{ item.title }}<br>
+{% for author in item.authors.all %}
+	{{ author.author_type }} : {{ author.author_name }}<br>
+{% endfor %}
+MEDIA TYPE: {{ item.media_type }}<br>
+</p>
+
+{% else %}
+
+<p>There is no item associated with this item number.</p>
+
+{% endif %}
