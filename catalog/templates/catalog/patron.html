@@ -1,0 +1,22 @@
+<!--  search box - and list of results (links to patron record) -->
+
+<form action="{% url 'patron_lookup' %}" method="get">
+	{{ form }}
+	<input type="submit" value="Search">
+</form>
+
+{% if query_results %}
+
+<p> {{ query_results.count }} results found. </p>
+
+<ul>
+{% for patron in query_results %}
+
+	<li>
+	 	<a href="{% url 'patron_record' patron.id %}">{{ patron.patron_name }} ({{ patron.email }}) [Patron {{ patron.id }}]</a>
+	</li>
+
+{% endfor %}
+</ul>
+
+{% endif %}
