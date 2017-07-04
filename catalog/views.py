@@ -40,7 +40,10 @@ def patron_lookup(request):
 	
 def patron_record(request, patron_id):
 	patron = get_object_or_404(Patron, pk=patron_id)
-	context = {'patron': patron}
+	current_checkouts = CheckOut.objects.filter(patron=patron).filter(check_in_date__isnull=True)
+	old_checkouts = CheckOut.objects.filter(patron=patron).filter(check_in_date__isnull=False)
+	
+	context = {'patron': patron, 'current_checkouts': current_checkouts, 'old_checkouts': old_checkouts}
 	return render(request, 'catalog/patron_record.html', context)
 
 	
