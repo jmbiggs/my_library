@@ -1,3 +1,7 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+
 <!--  search box - and list of results (links to patron record) -->
 
 <form action="{% url 'patron_lookup' %}" method="get">
