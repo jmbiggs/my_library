@@ -1,0 +1,18 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+
+{% if patron is None %}
+
+<form action="{% url 'checkout' %}" method="get">
+	{{ patron_form }}
+	{{ patron_type_form }}
+	<input type="submit" value="Search">
+</form>
+
+{% else %}
+
+<p> checking out to: {{ patron.patron_name }} </p>
+
+{% endif %}
+

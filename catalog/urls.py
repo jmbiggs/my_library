@@ -17,4 +17,10 @@ urlpatterns = [
 	
 	# patron record
 	url(r'^patron/(?P<patron_id>[0-9]+)/$', views.patron_record, name='patron_record'),
+	
+	# check out
+	url(r'^checkout/$', views.checkout, name='checkout'),
+	
+	# check in
+	url(r'^checkin/$', views.checkin, name='checkin'),
 ]

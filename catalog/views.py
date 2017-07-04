@@ -57,6 +57,41 @@ def patron_record(request, patron_id):
 	context = {'patron': patron, 'current_checkouts': current_checkouts, 'old_checkouts': old_checkouts}
 	return render(request, 'catalog/patron_record.html', context)
 
+def checkout(request):
+	# to complete checkout we need item and patron
+	item_id = request.GET.get('item')
+	patron_id = request.GET.get('patron')
+	
+	# if we have neither:
+	if item_id is None and patron_id is None:
+		patron_form = PatronSearchForm()
+		patron_type_form = PatronSearchTypeForm()
+		context = {'patron_form': patron_form, 'patron_type_form': patron_type_form}
+		
+	# if we have patron, but not item:
+	elif item_id is None and patron_id is not None:
+		patron = get_object_or_404(Patron, pk=patron_id)
+		context = {'patron': patron}
+		
+	# if we have item, but not patron:
+	elif item_id is not None and patron_id is None:
+		item = get_object_or_404(Item, pk=item_id)
+		patron_search_form = PatronSearchForm()
+		patron_search_type_form = PatronSearchTypeForm()
+		context = {'item': item, 'patron_form': patron_form, 'patron_type_form': patron_type_form}
+		
+	# if we have both:
+	else:
+		item = get_object_or_404(Item, pk=item_id)
+		patron = get_object_or_404(Patron, pk=patron_id)
+		context = {'item': item, 'patron': patron}
+	
+	return render(request, 'catalog/checkout.html', context)
+
+def checkin(request):
+	context = {}
+	return render(request, 'catalog/checkin.html', context)
+
 # helpers
 
 def is_int(string):
