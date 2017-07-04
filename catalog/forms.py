@@ -11,3 +11,16 @@ class PatronSearchTypeForm(forms.Form):
 	)
 	
 	query_type = forms.ChoiceField(label='', choices=SEARCH_TYPES)
+
+class ItemSearchForm(forms.Form):
+	query = forms.CharField(label='Item search', max_length=100)
+	
+class ItemSearchTypeForm(forms.Form):
+	SEARCH_TYPES = (
+		('title', 'Title'),
+		('author', 'Person'),
+		('type', 'Media Type'),
+		('id', 'Item ID #'),
+	)
+	
+	query_type = forms.ChoiceField(label='', choices=SEARCH_TYPES)

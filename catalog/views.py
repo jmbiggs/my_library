@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
 
-from .forms import PatronSearchForm, PatronSearchTypeForm
+from .forms import PatronSearchForm, PatronSearchTypeForm, ItemSearchForm, ItemSearchTypeForm
 from .models import Item, Patron, Author, CheckOut
 
 def index(request):
@@ -13,8 +13,32 @@ def index(request):
 	return render(request, 'catalog/index.html', context)
 	
 def browse(request):
-	items = Item.objects.all()
-	context = {'item_list': items}
+	# get possible queries
+	item_query = request.GET.get('query')
+	item_query_type = request.GET.get('query_type')
+	if item_query is not None:
+		form = ItemSearchForm({'query': item_query})
+		type_form = ItemSearchTypeForm({'query_type': item_query_type})
+		
+		# run search query
+		if item_query_type == 'title':
+			query_results = Item.objects.filter(title__icontains=item_query)
+		elif item_query_type == 'author':
+			query_results = Item.objects.filter(authors__author_name__icontains=item_query)			
+		elif item_query_type == 'type':
+			query_results = Item.objects.filter(media_type__icontains=item_query)			
+		elif item_query_type == 'id':
+			if is_int(item_query):
+				query_results = Item.objects.filter(pk=item_query)
+			else:
+				query_results = Item.objects.none()
+			
+		context = {'form': form, 'type_form': type_form, 'query_results': query_results}
+	else:
+		form = ItemSearchForm()
+		type_form = ItemSearchTypeForm()
+		items = Item.objects.all()
+		context = {'query_results': items, 'form': form, 'type_form': type_form}
 	return render(request, 'catalog/browse.html', context)
 	
 def item_record(request, item_id):
@@ -27,8 +51,8 @@ def patron_lookup(request):
 	patron_query = request.GET.get('query')
 	patron_query_type = request.GET.get('query_type')
 	if patron_query is not None:
-		form = PatronSearchForm({'query':patron_query})
-		type_form = PatronSearchTypeForm({'query_type':patron_query_type})
+		form = PatronSearchForm({'query': patron_query})
+		type_form = PatronSearchTypeForm({'query_type': patron_query_type})
 		
 		# run search query
 		if patron_query_type == 'name':
@@ -41,7 +65,7 @@ def patron_lookup(request):
 			else:
 				query_results = Patron.objects.none()
 		
-		context = {'form': form, 'type_form': type_form, 'patron_query': patron_query, 'query_results': query_results}
+		context = {'form': form, 'type_form': type_form, 'query_results': query_results}
 	else:
 		form = PatronSearchForm()
 		type_form = PatronSearchTypeForm()
@@ -100,11 +124,4 @@ def is_int(string):
 		return True
 	except ValueError:
 		return False
-	
-	
-	
-	
-	
-	
-	
 	

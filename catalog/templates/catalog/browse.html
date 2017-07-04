@@ -2,10 +2,26 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
 
-{% if item_list %}
+<!--  search box - and list of results (links to item records) -->
+
+<form action="{% url 'browse' %}" method="get">
+	{{ form }}
+	{{ type_form }}
+	<input type="submit" value="Search">
+</form>
+
+{% if query_results is not None %}
+
+{% if query_results.count == 0 %}
+	<p> No results found. </p>
+{% elif query_results.count == 1 %}
+	<p> 1 result found. </p>
+{% else %}
+	<p> {{ query_results.count }} results found. </p>
+{% endif %}
 
 <ul>
-	{% for item in item_list %}
+	{% for item in query_results %}
 	<li>
 	<a href="{% url 'item_record' item.id %}">{{ item }}</a>
 	</li>
