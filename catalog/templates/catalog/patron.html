@@ -2,13 +2,19 @@
 
 <form action="{% url 'patron_lookup' %}" method="get">
 	{{ form }}
+	{{ type_form }}
 	<input type="submit" value="Search">
 </form>
 
-{% if query_results %}
+{% if query_results is not None %}
 
-<p> {{ query_results.count }} results found. </p>
-
+	{% if query_results.count == 0 %}
+		<p> No results found. </p>
+	{% elif query_results.count == 1 %}
+		<p> 1 result found. </p>
+	{% else %}
+		<p> {{ query_results.count }} results found. </p>
+	{% endif %}
 <ul>
 {% for patron in query_results %}
 

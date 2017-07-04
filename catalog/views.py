@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
 
-from .forms import PatronSearchForm
+from .forms import PatronSearchForm, PatronSearchTypeForm
 from .models import Item, Patron, Author, CheckOut
 
 def index(request):
@@ -24,17 +24,28 @@ def item_record(request, item_id):
 	return render(request, 'catalog/item.html', context)
 
 def patron_lookup(request):
-	patron_query = request.GET.get('patron_query')	
-	if (patron_query is not None):
-		form = PatronSearchForm({'patron_query':patron_query})
+	patron_query = request.GET.get('query')
+	patron_query_type = request.GET.get('query_type')
+	if patron_query is not None:
+		form = PatronSearchForm({'query':patron_query})
+		type_form = PatronSearchTypeForm({'query_type':patron_query_type})
 		
 		# run search query
-		query_results = Patron.objects.filter(patron_name__icontains=patron_query)
+		if patron_query_type == 'name':
+			query_results = Patron.objects.filter(patron_name__icontains=patron_query)
+		elif patron_query_type == 'email':
+			query_results = Patron.objects.filter(email__icontains=patron_query)
+		elif patron_query_type == 'id':
+			if is_int(patron_query):
+				query_results = Patron.objects.filter(pk=patron_query)
+			else:
+				query_results = Patron.objects.none()
 		
-		context = {'form': form, 'patron_query': patron_query, 'query_results': query_results}
+		context = {'form': form, 'type_form': type_form, 'patron_query': patron_query, 'query_results': query_results}
 	else:
 		form = PatronSearchForm()
-		context = {'form': form}
+		type_form = PatronSearchTypeForm()
+		context = {'form': form, 'type_form': type_form}
 
 	return render(request, 'catalog/patron.html', context)
 	
@@ -46,8 +57,14 @@ def patron_record(request, patron_id):
 	context = {'patron': patron, 'current_checkouts': current_checkouts, 'old_checkouts': old_checkouts}
 	return render(request, 'catalog/patron_record.html', context)
 
-	
-	
+# helpers
+
+def is_int(string):
+	try:
+		int(string)
+		return True
+	except ValueError:
+		return False
 	
 	
 	
