@@ -1,12 +1,42 @@
 body {
 	background-color: rosybrown;
 	color: white;
+	font-family: 'Helvetica', 'Arial', Sans-Serif;
+	font-size: 200%;
+	font-weight: bold;
+	text-align: center;
 }
 
 a:link {
 	color: cyan;
+	font-weight: bold;
+	text-decoration: none;
+	
 }
 
 a:visited {
 	color: cyan;
 }
+
+img {
+    width: 100%;
+
+}
+
+.object {
+  float: center;
+  margin: 13px;
+  padding: 0.1px;
+  max-width: 100%;
+  height: auto;
+  border: 3px solid black;
+} 
+
+.object50 {
+  float: center;
+  margin: 13px;
+  padding: 0.1px;
+  max-width: 100%;
+  height: auto;
+  border: 3px solid black;
+} 

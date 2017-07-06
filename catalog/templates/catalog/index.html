@@ -1,7 +1,31 @@
 {% load static %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
 
-<a href="{% url 'browse' %}">Browse items</a> <br>
-<a href="{% url 'patron_lookup' %}">Lookup a Patron</a> <br>
-<a href="{% url 'checkout' %}">Check out</a>
+
+
+
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+</head>
+
+<body>
+	
+<div class="object">
+	<h1>my library</h1>
+	<div class="object50">
+		<a href="{% url 'browse' %}">BROWSE ITEMS</a>
+	</div>
+	<div class="object50">
+		<a href="{% url 'patron_lookup' %}">LOOKUP A PATRON</a> 
+	</div>
+	<div class="object50">
+		<a href="{% url 'checkout' %}">CHECKOUT</a>
+	</div>
+	
+</div>
+
+</body>
+</html>
