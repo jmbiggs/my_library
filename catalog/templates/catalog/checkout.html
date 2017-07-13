@@ -23,7 +23,7 @@
 	<ul>
 		{% for item in item_results %}
 		<li>
-		<a href="{% url 'checkout' %}">{{ item }}</a>
+		<a href="{% url 'checkout' %}?item={{ item.id }}">{{ item }}</a>
 		</li>
 		{% endfor %}
 	</ul>
@@ -32,7 +32,7 @@
 
 {% else %}
 
-<p> item: {{ item.item_name }} </p>
+<p> item: {{ item }} </p>
 
 {% endif %}
 
@@ -57,7 +57,7 @@
 		{% for patron in patron_results %}
 
 			<li>
-		 		<a href="{% url 'patron_record' patron.id %}">{{ patron.patron_name }} ({{ patron.email }}) [Patron {{ patron.id }}]</a>
+		 		<a href="{% url 'checkout' %}?patron={{ patron.id }}">{{ patron.patron_name }} ({{ patron.email }}) [Patron {{ patron.id }}]</a>
 			</li>
 
 		{% endfor %}

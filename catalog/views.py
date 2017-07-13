@@ -64,7 +64,7 @@ def patron_record(request, patron_id):
 	return render(request, 'catalog/patron_record.html', context)
 
 def checkout(request):
-	# get possible info passed to url
+	# get possible parameters passed to url
 	item_id = request.GET.get('item')
 	i_query = request.GET.get('i_query')
 	i_query_type = request.GET.get('i_query_type')
