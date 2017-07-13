@@ -14,24 +14,14 @@ def index(request):
 	
 def browse(request):
 	# get possible queries
-	item_query = request.GET.get('query')
-	item_query_type = request.GET.get('query_type')
-	if item_query is not None:
-		form = ItemSearchForm({'query': item_query})
-		type_form = ItemSearchTypeForm({'query_type': item_query_type})
+	query = request.GET.get('i_query')
+	query_type = request.GET.get('i_query_type')
+	if query is not None:
+		form = ItemSearchForm({'i_query': query})
+		type_form = ItemSearchTypeForm({'i_query_type': query_type})
 		
 		# run search query
-		if item_query_type == 'title':
-			query_results = Item.objects.filter(title__icontains=item_query)
-		elif item_query_type == 'author':
-			query_results = Item.objects.filter(authors__author_name__icontains=item_query)			
-		elif item_query_type == 'type':
-			query_results = Item.objects.filter(media_type__icontains=item_query)			
-		elif item_query_type == 'id':
-			if is_int(item_query):
-				query_results = Item.objects.filter(pk=item_query)
-			else:
-				query_results = Item.objects.none()
+		query_results = item_query(query, query_type)
 			
 		context = {'form': form, 'type_form': type_form, 'query_results': query_results}
 	else:
@@ -48,23 +38,15 @@ def item_record(request, item_id):
 	return render(request, 'catalog/item.html', context)
 
 def patron_lookup(request):
-	patron_query = request.GET.get('query')
-	patron_query_type = request.GET.get('query_type')
-	if patron_query is not None:
-		form = PatronSearchForm({'query': patron_query})
-		type_form = PatronSearchTypeForm({'query_type': patron_query_type})
+	query = request.GET.get('p_query')
+	query_type = request.GET.get('p_query_type')
+	if query is not None:
+		form = PatronSearchForm({'p_query': query})
+		type_form = PatronSearchTypeForm({'p_query_type': query_type})
 		
 		# run search query
-		if patron_query_type == 'name':
-			query_results = Patron.objects.filter(patron_name__icontains=patron_query)
-		elif patron_query_type == 'email':
-			query_results = Patron.objects.filter(email__icontains=patron_query)
-		elif patron_query_type == 'id':
-			if is_int(patron_query):
-				query_results = Patron.objects.filter(pk=patron_query)
-			else:
-				query_results = Patron.objects.none()
-		
+		query_results = patron_query(query, query_type)
+				
 		context = {'form': form, 'type_form': type_form, 'query_results': query_results}
 	else:
 		form = PatronSearchForm()
@@ -82,34 +64,50 @@ def patron_record(request, patron_id):
 	return render(request, 'catalog/patron_record.html', context)
 
 def checkout(request):
-	# to complete checkout we need item and patron
+	# get possible info passed to url
 	item_id = request.GET.get('item')
+	i_query = request.GET.get('i_query')
+	i_query_type = request.GET.get('i_query_type')
 	patron_id = request.GET.get('patron')
+	p_query = request.GET.get('p_query')
+	p_query_type = request.GET.get('p_query_type')
 	
-	# if we have neither:
-	if item_id is None and patron_id is None:
-		patron_form = PatronSearchForm()
-		patron_type_form = PatronSearchTypeForm()
-		context = {'patron_form': patron_form, 'patron_type_form': patron_type_form}
-		
-	# if we have patron, but not item:
-	elif item_id is None and patron_id is not None:
-		patron = get_object_or_404(Patron, pk=patron_id)
-		context = {'patron': patron}
-		
-	# if we have item, but not patron:
-	elif item_id is not None and patron_id is None:
-		item = get_object_or_404(Item, pk=item_id)
-		patron_search_form = PatronSearchForm()
-		patron_search_type_form = PatronSearchTypeForm()
-		context = {'item': item, 'patron_form': patron_form, 'patron_type_form': patron_type_form}
-		
-	# if we have both:
+	# default context objects
+	item = None
+	item_form = None
+	item_type_form = None
+	item_results = None
+	patron = None
+	patron_form = None
+	patron_type_form = None
+	patron_results = None
+	
+	# item section	
+	if item_id is None:
+		if i_query is None:
+			item_form = ItemSearchForm()
+			item_type_form = ItemSearchTypeForm()
+		else:
+			item_results = item_query(i_query, i_query_type)
+			item_form = ItemSearchForm({'i_query': i_query})
+			item_type_form = ItemSearchTypeForm({'i_query_type': i_query_type})
 	else:
 		item = get_object_or_404(Item, pk=item_id)
+		
+	# patron section
+	if patron_id is None:
+		if p_query is None:
+			patron_form = PatronSearchForm()
+			patron_type_form = PatronSearchTypeForm()
+		else:
+			patron_results = patron_query(p_query, p_query_type)
+			patron_form = PatronSearchForm({'p_query': p_query})
+			patron_type_form = PatronSearchTypeForm({'p_query_type': p_query_type})
+	else:
 		patron = get_object_or_404(Patron, pk=patron_id)
-		context = {'item': item, 'patron': patron}
-	
+		
+	context = {'item': item, 'item_form': item_form, 'item_type_form': item_type_form, 'item_results': item_results, 'patron': patron, 'patron_form': patron_form, 'patron_type_form': patron_type_form, 'patron_results': patron_results}
+
 	return render(request, 'catalog/checkout.html', context)
 
 def checkin(request):
@@ -117,6 +115,30 @@ def checkin(request):
 	return render(request, 'catalog/checkin.html', context)
 
 # helpers
+
+def patron_query(query, query_type):
+	if query_type == 'name':
+		return Patron.objects.filter(patron_name__icontains=query)
+	elif query_type == 'email':
+		return Patron.objects.filter(email__icontains=query)
+	elif query_type == 'id':
+		if is_int(query):
+			return Patron.objects.filter(pk=query)
+		else:
+			return Patron.objects.none()
+
+def item_query(query, query_type):
+	if query_type == 'title':
+		return Item.objects.filter(title__icontains=query)
+	elif query_type == 'author':
+		return Item.objects.filter(authors__author_name__icontains=query)			
+	elif query_type == 'type':
+		return Item.objects.filter(media_type__icontains=query)			
+	elif query_type == 'id':
+		if is_int(query):
+			return Item.objects.filter(pk=query)
+		else:
+			return Item.objects.none()
 
 def is_int(string):
 	try:

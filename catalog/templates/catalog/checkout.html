@@ -2,6 +2,40 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
 
+{% if item is None %}
+
+<form action="{% url 'checkout' %}" method="get">
+	{{ item_form }}
+	{{ item_type_form }}
+	<input type="submit" value="Search">
+</form>
+
+	{% if item_results is not None %}
+
+	{% if item_results.count == 0 %}
+		<p> No results found. </p>
+	{% elif item_results.count == 1 %}
+		<p> 1 result found. </p>
+	{% else %}
+		<p> {{ item_results.count }} results found. </p>
+	{% endif %}
+
+	<ul>
+		{% for item in item_results %}
+		<li>
+		<a href="{% url 'checkout' %}">{{ item }}</a>
+		</li>
+		{% endfor %}
+	</ul>
+
+	{% endif %}
+
+{% else %}
+
+<p> item: {{ item.item_name }} </p>
+
+{% endif %}
+
 {% if patron is None %}
 
 <form action="{% url 'checkout' %}" method="get">
@@ -10,9 +44,27 @@
 	<input type="submit" value="Search">
 </form>
 
+	{% if patron_results is not None %}
+
+		{% if patron_results.count == 0 %}
+			<p> No results found. </p>
+		{% elif patron_results.count == 1 %}
+			<p> 1 result found. </p>
+		{% else %}
+			<p> {{ patron_results.count }} results found. </p>
+		{% endif %}
+		<ul>
+		{% for patron in patron_results %}
+
+			<li>
+		 		<a href="{% url 'patron_record' patron.id %}">{{ patron.patron_name }} ({{ patron.email }}) [Patron {{ patron.id }}]</a>
+			</li>
+
+		{% endfor %}
+	{% endif %}
+
 {% else %}
 
 <p> checking out to: {{ patron.patron_name }} </p>
 
 {% endif %}
-
