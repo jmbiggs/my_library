@@ -31,7 +31,7 @@
 				{% if patron is None %}
 					<a href="{% url 'checkout' %}?item={{ item.id }}">{{ item }}</a>
 				{% else %}
-					<a href="{% url 'checkout' %}?item={{ item.id }}&patron={{ patron.id }}">{{ item }}</a>		
+					<a href="{% url 'checkout' %}?item={{ item.id }}&patron={{ patron.id }}">{{ item }}</a>
 				{% endif %}
 				</li>
 			{% endfor %}
@@ -41,7 +41,13 @@
 
 {% else %}
 
-	<p> checking out item: {{ item }} </p>
+	<p> checking out item: {{ item }}
+	{% if patron is None %}
+		<a href="{% url 'checkout' %}">Wrong item?</a>
+	{% else %}
+		<a href="{% url 'checkout' %}?patron={{ patron.id }}">Wrong item?</a>
+	{% endif %}
+	</p>
 
 {% endif %}
 
@@ -81,6 +87,12 @@
 
 {% else %}
 
-	<p> checking out to patron: {{ patron.patron_name }} </p>
+	<p> checking out to patron: {{ patron.patron_name }}
+	{% if item is None %}
+		<a href="{% url 'checkout' %}">Wrong person?</a>
+	{% else %}
+		<a href="{% url 'checkout' %}?item={{ item.id }}">Wrong person?</a>				
+	{% endif %}
+	</p>
 
 {% endif %}
