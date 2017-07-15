@@ -96,3 +96,13 @@
 	</p>
 
 {% endif %}
+
+{% if patron is not None and item is not None %}
+
+<p>
+<form action="{% url 'checkout' %}" method="get">
+	<input type="submit" value="Confirm Checkout">
+</form>
+</p>
+
+{% endif %}

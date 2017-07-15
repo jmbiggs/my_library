@@ -13,6 +13,7 @@ MEDIA TYPE: {{ item.media_type }}<br>
 {% for checkout in checkouts %}
 	CHECKED OUT TO: {{ checkout.patron.patron_name }} (due date: {{ checkout.due_date }})<br>
 {% endfor %}
+<a href="{% url 'checkout' %}?item={{ item.id }}">Check this item out</a>
 </p>
 
 {% else %}
