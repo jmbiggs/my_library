@@ -104,8 +104,8 @@ def checkout(request):
 			patron_form = PatronSearchForm({'p_query': p_query})
 			patron_type_form = PatronSearchTypeForm({'p_query_type': p_query_type})
 	else:
-		patron = get_object_or_404(Patron, pk=patron_id)
-		
+		patron = get_object_or_404(Patron, pk=patron_id)			
+	
 	context = {'item': item, 'item_form': item_form, 'item_type_form': item_type_form, 'item_results': item_results, 'patron': patron, 'patron_form': patron_form, 'patron_type_form': patron_type_form, 'patron_results': patron_results}
 
 	return render(request, 'catalog/checkout.html', context)
