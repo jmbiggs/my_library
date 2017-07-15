@@ -11,7 +11,7 @@ TITLE: {{ item.title }}<br>
 {% endfor %}
 MEDIA TYPE: {{ item.media_type }}<br>
 {% for checkout in checkouts %}
-	CHECKED OUT TO: {{ checkout.patron.patron_name }} (due date: {{ checkout.due_date }})<br>
+	CHECKED OUT TO: <a href="{% url 'patron_record' checkout.patron.id %}">{{ checkout.patron.patron_name }}</a> (due date: {{ checkout.due_date }})<br>
 {% endfor %}
 <a href="{% url 'checkout' %}?item={{ item.id }}">Check this item out</a>
 </p>
@@ -21,3 +21,5 @@ MEDIA TYPE: {{ item.media_type }}<br>
 <p>There is no item associated with this item number.</p>
 
 {% endif %}
+
+<a href="{% url 'index' %}">Home</a>

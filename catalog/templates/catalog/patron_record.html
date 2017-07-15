@@ -14,14 +14,14 @@ Email: {{ patron.email }}<br>
 Currently checked out:<br>
 
 {% for checkout in current_checkouts %}
-	{{ checkout.item.title }} (checked out: {{ checkout.check_out_date }} - due date: {{ checkout.due_date }})<br>
+	<a href="{% url 'item_record' checkout.item.id %}">{{ checkout.item.title }}</a> (checked out: {{ checkout.check_out_date }} - due date: {{ checkout.due_date }})<br>
 {% endfor %}
 
 <br>
 Checkout history:<br>
 
 {% for checkout in old_checkouts %}
-	{{ checkout.item.title }} (checked out: {{ checkout.check_out_date }} - checked in: {{ checkout.check_in_date }})<br>
+	<a href="{% url 'item_record' checkout.item.id %}">	{{ checkout.item.title }} </a> (checked out: {{ checkout.check_out_date }} - checked in: {{ checkout.check_in_date }})<br>
 {% endfor %}
 
 </p>
@@ -31,3 +31,5 @@ Checkout history:<br>
 <p>There is no patron associated with this id number.</p>
 
 {% endif %}
+
+<a href="{% url 'index' %}">Home</a>
