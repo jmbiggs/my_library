@@ -12,6 +12,7 @@ __pycache__/
 *.log
 *.pot
 *.pyc
+*.pyo
 __pycache__/
 local_settings.py
 
