@@ -1,10 +1,15 @@
 {% load static %}
-
-<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
-
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+</head>
+<body>
+	
 {% if item %}
 
-<p>ID: {{ item.id }}<br>
+<div class="object">
+ID: {{ item.id }}<br>
 TITLE: {{ item.title }}<br>
 {% for author in item.authors.all %}
 	{{ author.author_type }} : {{ author.author_name }}<br>
@@ -13,10 +18,14 @@ MEDIA TYPE: {{ item.media_type }}<br>
 {% for checkout in checkouts %}
 	CHECKED OUT TO: {{ checkout.patron.patron_name }} (due date: {{ checkout.due_date }})<br>
 {% endfor %}
-</p>
+</div>
 
 {% else %}
 
-<p>There is no item associated with this item number.</p>
+<div class="object">There is no item associated with this item number.</div>
 
 {% endif %}
+
+</body>
+
+</html>

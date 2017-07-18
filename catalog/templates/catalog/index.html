@@ -1,29 +1,60 @@
 {% load static %}
 
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+	<script>
+		$(function() {
+			var pull 		= $('#pull');
+				menu 		= $('nav ul');
+				menuHeight	= menu.height();
+
+			$(pull).on('click', function(e) {
+				e.preventDefault();
+				menu.slideToggle();
+			});
+
+			$(window).resize(function(){
+        		var w = $(window).width();
+        		if(w > 320 && menu.is(':hidden')) {
+        			menu.removeAttr('style');
+        		}
+    		});
+		});
+	</script>
 </head>
 
 <body>
 	
+	<div class="object">
+	<nav class="clearfix">
+		<ul class="clearfix">
+			<li><a href="{% url 'browse' %}">BROWSE ITEMS</a></li>
+			<li><a href="{% url 'patron_lookup' %}">LOOKUP A PATRON</a></li>
+			<li><a href="{% url 'checkout' %}">CHECKOUT</a></li>
+		</ul>
+		<a href="#" id="pull">Menu</a>
+		
+	</nav></div>
+	
 <div class="object">
-	<h1>my library</h1>
-	<div class="object50">
+	
+	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Seshat.svg/220px-Seshat.svg.png">
+	<h1>library catalog</h1>
+	<div class="object">
 		<a href="{% url 'browse' %}">BROWSE ITEMS</a>
 	</div>
-	<div class="object50">
+	<div class="object">
 		<a href="{% url 'patron_lookup' %}">LOOKUP A PATRON</a> 
 	</div>
-	<div class="object50">
+	<div class="object">
 		<a href="{% url 'checkout' %}">CHECKOUT</a>
 	</div>
+
 	
 </div>
 

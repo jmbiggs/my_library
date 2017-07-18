@@ -2,9 +2,9 @@ body {
 	background-color: rosybrown;
 	color: white;
 	font-family: 'Helvetica', 'Arial', Sans-Serif;
-	font-size: 200%;
+	font-size: 100%;
 	font-weight: bold;
-	text-align: center;
+	text-align: left;
 }
 
 a:link {
@@ -19,24 +19,144 @@ a:visited {
 }
 
 img {
-    width: 100%;
+    max-width: 100px;
 
 }
+
+nav {
+  height: 40px;
+  width: 100%;
+  background: #455868;
+  font-family: 'Helvetica', 'Arial', Sans-Serif;
+  font-weight: bold;
+  position: center;
+  border-bottom: 2px solid #283744;
+}
+nav ul {
+  padding: 0;
+  margin: 0 auto;
+  width: 100%;
+  height: auto;
+}
+
+	
+nav li {
+  display: inline;
+  width: 100%;
+  float: center;
+  margin: 0px;
+}
+
+nav a {
+  color: #fff;
+  display: inline-block;
+  width: auto;
+  text-align: center;
+  text-decoration: none;
+  line-height: 40px;
+  text-shadow: 1px 1px 0px #283744;
+}
+
+nav li a {
+  border-right: 1px solid #576979;
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+}
+nav li:last-child a {
+  border-right: 0;
+}
+
+nav a:hover, nav a:active {
+  background-color: #8c99a4;
+}
+
+nav a#pull {
+  display: none;
+}   
+
+@media screen and (max-width: 600px) {
+  nav { 
+      height: auto;
+    }
+    nav ul {
+      width: 100%;
+      display: block;
+      height: auto;
+    }
+    nav li {
+      width: 50%;
+      float: left;
+      position: relative;
+    }
+    nav li a {
+    border-bottom: 1px solid #576979;
+    border-right: 1px solid #576979;
+  }
+    nav a {
+      text-align: left;
+      width: 100%;
+      text-indent: 25px;
+    }
+}
+
+@media only screen and (max-width : 480px) {
+  nav {
+    border-bottom: 0;
+  }
+  nav ul {
+    display: none;
+    height: auto;
+  }
+  nav a#pull {
+    display: block;
+    background-color: #283744;
+    width: 100%;
+    position: relative;
+  }
+  nav a#pull:after {
+    content:"";
+    background: url('nav-icon.png') no-repeat;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+  }
+}
+
+@media only screen and (max-width : 320px) {
+  nav li {
+    display: block;
+    float: none;
+    width: 100%;
+  }
+  nav li a {
+    border-bottom: 1px solid #576979;
+  }
+}
+
+
 
 .object {
   float: center;
   margin: 13px;
-  padding: 0.1px;
+  padding: 1px;
   max-width: 100%;
   height: auto;
   border: 3px solid black;
 } 
 
-.object50 {
-  float: center;
-  margin: 13px;
-  padding: 0.1px;
-  max-width: 100%;
-  height: auto;
-  border: 3px solid black;
-} 
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+.clearfix:after {
+    clear: both;
+}
+.clearfix {
+    *zoom: 1;
+}
+
