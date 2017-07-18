@@ -1,0 +1,12 @@
+body {
+	background-color: rosybrown;
+	color: white;
+}
+
+a:link {
+	color: cyan;
+}
+
+a:visited {
+	color: cyan;
+}

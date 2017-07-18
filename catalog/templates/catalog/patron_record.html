@@ -1,0 +1,35 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+
+{% if patron %}
+
+<p>Patron ID: {{ patron.id }}<br>
+Name: {{ patron.patron_name }}<br>
+Email: {{ patron.email }}<br>
+<br>
+<a href="{% url 'checkout' %}?patron={{ patron.id }}"> Check Out an item </a>
+<br>
+<br>
+Currently checked out:<br>
+
+{% for checkout in current_checkouts %}
+	<a href="{% url 'item_record' checkout.item.id %}">{{ checkout.item.title }}</a> (checked out: {{ checkout.check_out_date }} - due date: {{ checkout.due_date }})<br>
+{% endfor %}
+
+<br>
+Checkout history:<br>
+
+{% for checkout in old_checkouts %}
+	<a href="{% url 'item_record' checkout.item.id %}">	{{ checkout.item.title }} </a> (checked out: {{ checkout.check_out_date }} - checked in: {{ checkout.check_in_date }})<br>
+{% endfor %}
+
+</p>
+
+{% else %}
+
+<p>There is no patron associated with this id number.</p>
+
+{% endif %}
+
+<a href="{% url 'index' %}">Home</a>
