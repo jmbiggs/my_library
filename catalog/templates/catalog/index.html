@@ -78,13 +78,27 @@
 				{% for item in results %}
 					<li>
 					<a href="{% url 'item_record' item.id %}">{{ item }}</a>
-					<form action="{% url 'index' %}" method="get">
-						<input type="hidden" name="item" value="{{ item.id }}">
-						{% if patron is not None %}
-							<input type="hidden" name="patron" value="{{ patron.id }}">
-						{% endif %}
-						<input type="submit" value="Check Out">
-					</form>
+
+					{% if item.is_checked_out %}
+						(Checked Out)
+						<form action="{% url 'index' %}" method="get">
+							<input type="hidden" name="item" value="{{ item.id }}">
+							{% if patron is not None %}
+								<input type="hidden" name="patron" value="{{ patron.id }}">
+							{% endif %}
+							<input type="submit" value="Check In">
+						</form>
+					{% else %}
+						(Available)
+						<form action="{% url 'index' %}" method="get">
+							<input type="hidden" name="item" value="{{ item.id }}">
+							{% if patron is not None %}
+								<input type="hidden" name="patron" value="{{ patron.id }}">
+							{% endif %}
+							<input type="submit" value="Check Out">
+						</form>
+					{% endif %}
+										
 					</li>
 				{% endfor %}
 			</ul>

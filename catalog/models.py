@@ -128,7 +128,11 @@ class Item(models.Model):
 	api_link = models.CharField(max_length=150, blank=True, null=True)
 
 	def __str__(self):
-		return self.title + ' (' + self.media_type + ')'		
+		return self.title + ' (' + self.media_type + ')'
+		
+	def is_checked_out(self):
+		checkouts = CheckOut.objects.filter(item_id=self.id).filter(check_in_date__isnull=True)		
+		return checkouts.exists()	
 
 class CheckOut(models.Model):
 	check_in_date = models.DateTimeField(blank=True, null=True)
