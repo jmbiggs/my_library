@@ -13,37 +13,35 @@ def index(request):
 	# get possible parameters passed to url
 	search_mode = request.GET.get('mode')
 	query = request.GET.get('query')
-	query_type = request.GET.get('query_type')
 	item_id = request.GET.get('item')
 	patron_id = request.GET.get('patron')
 	
-	# default context objects
-	item = None
-	patron = None
-	search_form = None
-	results = None
-	
-	if search_mode is None:
-		mode_form = SearchModeForm()
+	if item_id is not None:
+		item = get_object_or_404(Item, pk=item_id)
 	else:
-		mode_form = SearchModeForm({'mode': search_mode})
+		item = None
+		
+	if patron_id is not None:
+		patron = get_object_or_404(Patron, pk=patron_id)			
+	else:
+		patron = None
+			
+	if search_mode is None:
+		if item is not None:
+			search_mode = 'patron'
+		else:
+			search_mode = 'item'
+	mode_form = SearchModeForm({'mode': search_mode})
 
 	if query is None:
 		search_form = SearchForm()
+		results = None
 	else:
 		search_form = SearchForm({'query': query})
 		if search_mode == 'patron':
 			results = patron_query(query)
 		else:
 			results = item_query(query)
-	
-	# item section	
-	if item_id is not None:
-		item = get_object_or_404(Item, pk=item_id)
-		
-	# patron section
-	if patron_id is not None:
-		patron = get_object_or_404(Patron, pk=patron_id)			
 	
 	context = {'mode': search_mode, 'mode_form': mode_form, 'search_form': search_form, 'item': item, 'results': results, 'patron': patron}
 
