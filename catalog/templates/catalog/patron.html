@@ -1,34 +1,34 @@
-{% load static %}
-
-<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
-
-<!--  search box - and list of results (links to patron record) -->
-
-<form action="{% url 'patron_lookup' %}" method="get">
-	{{ form }}
-	{{ type_form }}
-	<input type="submit" value="Search">
-</form>
-
-{% if query_results is not None %}
-
-	{% if query_results.count == 0 %}
-		<p> No results found. </p>
-	{% elif query_results.count == 1 %}
-		<p> 1 result found. </p>
-	{% else %}
-		<p> {{ query_results.count }} results found. </p>
-	{% endif %}
-<ul>
-{% for patron in query_results %}
-
-	<li>
-	 	<a href="{% url 'patron_record' patron.id %}">{{ patron.patron_name }} ({{ patron.email }}) [Patron {{ patron.id }}]</a>
-	</li>
-
-{% endfor %}
-</ul>
-
-{% endif %}
-
-<a href="{% url 'index' %}">Home</a>
+<!-- {% load static %} -->
+<!--  -->
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" /> -->
+<!--  -->
+<!-- <!--  search box - and list of results (links to patron record) --> -->
+<!--  -->
+<!-- <form action="{% url 'patron_lookup' %}" method="get"> -->
+<!-- 	{{ form }} -->
+<!-- 	{{ type_form }} -->
+<!-- 	<input type="submit" value="Search"> -->
+<!-- </form> -->
+<!--  -->
+<!-- {% if query_results is not None %} -->
+<!--  -->
+<!-- 	{% if query_results.count == 0 %} -->
+<!-- 		<p> No results found. </p> -->
+<!-- 	{% elif query_results.count == 1 %} -->
+<!-- 		<p> 1 result found. </p> -->
+<!-- 	{% else %} -->
+<!-- 		<p> {{ query_results.count }} results found. </p> -->
+<!-- 	{% endif %} -->
+<!-- <ul> -->
+<!-- {% for patron in query_results %} -->
+<!--  -->
+<!-- 	<li> -->
+<!-- 	 	<a href="{% url 'patron_record' patron.id %}">{{ patron.patron_name }} ({{ patron.email }}) [Patron {{ patron.id }}]</a> -->
+<!-- 	</li> -->
+<!--  -->
+<!-- {% endfor %} -->
+<!-- </ul> -->
+<!--  -->
+<!-- {% endif %} -->
+<!--  -->
+<!-- <a href="{% url 'index' %}">Home</a> -->

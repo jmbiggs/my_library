@@ -2,6 +2,87 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
 
-<a href="{% url 'browse' %}">Browse items</a> <br>
-<a href="{% url 'patron_lookup' %}">Lookup a Patron</a> <br>
-<a href="{% url 'checkout' %}">Check out</a>
+	<form action="{% url 'index' %}" method="get">
+		{{ mode_form }}
+		{{ search_form }}
+		
+		{% if patron is not None %}
+			<input type="hidden" name="patron" value="{{ patron.id }}">
+		{% endif %}
+
+		<input type="submit" value="Search">
+	</form>
+
+	{% if results is not None %}
+
+		{% if results.count == 0 %}
+			<p> No results found. </p>
+		{% elif results.count == 1 %}
+			<p> 1 result found. </p>
+		{% else %}
+			<p> {{ results.count }} results found. </p>
+		{% endif %}
+		
+		{% if mode == 'patron' %}
+			<ul>
+			{% for patron in results %}
+				<li>
+				<a href="{% url 'patron_record' patron.id %}">{{ patron }}</a>
+<!-- 				{% if item is None %} -->
+<!-- 					<a href="{% url 'index' %}?patron={{ patron.id }}">{{ patron.patron_name }} ({{ patron.email }}) [Patron {{ patron.id }}]</a> -->
+<!-- 				{% else %} -->
+<!-- 					<a href="{% url 'index' %}?patron={{ patron.id }}&item={{ item.id }}">{{ patron.patron_name }} ({{ patron.email }}) [Patron {{ patron.id }}]</a> -->
+<!-- 				{% endif %} -->
+				</li>
+			{% endfor %}
+			</ul>
+		{% else %}
+			<ul>
+				{% for item in results %}
+					<li>
+					<a href="{% url 'item_record' item.id %}">{{ item }}</a>
+<!-- 					{% if patron is None %} -->
+<!-- 						<a href="{% url 'index' %}?item={{ item.id }}">{{ item }}</a> -->
+<!-- 					{% else %} -->
+<!-- 						<a href="{% url 'index' %}?item={{ item.id }}&patron={{ patron.id }}">{{ item }}</a> -->
+<!-- 					{% endif %} -->
+					</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+
+	{% endif %}
+
+<!--  else %} -->
+<!--  -->
+<!-- 	<p> checking out item: {{ item }} -->
+<!-- 	{% if patron is None %} -->
+<!-- 		<a href="{% url 'index' %}">Wrong item?</a> -->
+<!-- 	{% else %} -->
+<!-- 		<a href="{% url 'index' %}?patron={{ patron.id }}">Wrong item?</a> -->
+<!-- 	{% endif %} -->
+<!-- 	</p> -->
+<!--  -->
+<!-- endif %} -->
+
+<!-- else %} -->
+<!--  -->
+<!-- 	<p> checking out to patron: {{ patron.patron_name }} -->
+<!-- 	{% if item is None %} -->
+<!-- 		<a href="{% url 'index' %}">Wrong person?</a> -->
+<!-- 	{% else %} -->
+<!-- 		<a href="{% url 'index' %}?item={{ item.id }}">Wrong person?</a>				 -->
+<!-- 	{% endif %} -->
+<!-- 	</p> -->
+<!--  -->
+<!-- endif %} -->
+<!--  -->
+<!-- {% if patron is not None and item is not None %} -->
+<!--  -->
+<!-- <p> -->
+<!-- <form action="{% url 'index' %}" method="get"> -->
+<!-- 	<input type="submit" value="Confirm Checkout"> -->
+<!-- </form> -->
+<!-- </p> -->
+<!--  -->
+<!-- {% endif %} -->
