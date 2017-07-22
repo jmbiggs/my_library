@@ -65,6 +65,9 @@ def patron_record(request, patron_id):
 # helpers
 
 def patron_query(query):
+	if query == '':
+		return Patron.objects.all()
+	
 	if is_int(query):
 		id_query = Q(pk=query)
 	else:
@@ -75,6 +78,9 @@ def patron_query(query):
 	return Patron.objects.filter(id_query | name_query | email_query).distinct()
 	
 def item_query(query):
+	if query == '':
+		return Item.objects.all()
+	
 	if is_int(query):
 		id_query = Q(pk=query)
 	else:

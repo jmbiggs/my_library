@@ -9,4 +9,4 @@ class SearchModeForm(forms.Form):
 	mode = forms.ChoiceField(label='', choices=SEARCH_MODES)
 
 class SearchForm(forms.Form):
-	query = forms.CharField(label='', max_length=100)
+	query = forms.CharField(label='', max_length=100, required=False)
