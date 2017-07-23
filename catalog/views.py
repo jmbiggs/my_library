@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
 
-from .forms import SearchModeForm, SearchForm
+from .forms import SearchModeForm, SearchForm, PatronForm, ItemForm
 from .models import Item, Patron, Author, CheckOut
 
 def index(request):
@@ -47,19 +47,41 @@ def index(request):
 
 	return render(request, 'catalog/index.html', context)
 
+def new_item(request):
+	form = ItemForm()
+	context = {'form': form}
+	return render(request, 'catalog/item.html', context)
+
 def item_record(request, item_id):
 	item = get_object_or_404(Item, pk=item_id)
+	
+	if item:
+		form = ItemForm(instance=item)
+	else:
+		form = None
+	
 	checkouts = CheckOut.objects.filter(item_id=item_id).filter(check_in_date__isnull=True)
 	
-	context = {'item': item, 'checkouts': checkouts}
+	context = {'item': item, 'form': form, 'checkouts': checkouts}
 	return render(request, 'catalog/item.html', context)
+	
+def new_patron(request):
+	form = PatronForm()
+	context = {'form': form}
+	return render(request, 'catalog/patron_record.html', context)
 	
 def patron_record(request, patron_id):
 	patron = get_object_or_404(Patron, pk=patron_id)
+	
+	if patron:
+		form = PatronForm(instance=patron)
+	else:
+		form = None
+
 	current_checkouts = CheckOut.objects.filter(patron=patron).filter(check_in_date__isnull=True)
 	old_checkouts = CheckOut.objects.filter(patron=patron).filter(check_in_date__isnull=False)
 	
-	context = {'patron': patron, 'current_checkouts': current_checkouts, 'old_checkouts': old_checkouts}
+	context = {'patron': patron, 'form': form, 'current_checkouts': current_checkouts, 'old_checkouts': old_checkouts}
 	return render(request, 'catalog/patron_record.html', context)
 
 # helpers
