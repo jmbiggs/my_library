@@ -4,21 +4,23 @@
 
 {% if item %}
 
-<p>ID: {{ item.id }}<br>
-TITLE: {{ item.title }}<br>
-{% for author in item.authors.all %}
-	{{ author.author_type }} : {{ author.author_name }}<br>
-{% endfor %}
-MEDIA TYPE: {{ item.media_type }}<br>
-{% for checkout in checkouts %}
-	CHECKED OUT TO: <a href="{% url 'patron_record' checkout.patron.id %}">{{ checkout.patron.patron_name }}</a> (due date: {{ checkout.due_date }})<br>
-{% endfor %}
-<a href="{% url 'checkout' %}?item={{ item.id }}">Check this item out</a>
-</p>
+	<p>ID: {{ item.id }}</p>
+
+	{{ form.as_p }}
+
+	{% for checkout in checkouts %}
+		CHECKED OUT TO: <a href="{% url 'patron_record' checkout.patron.id %}">{{ checkout.patron.patron_name }}</a> (due date: {{ checkout.due_date }})<br>
+	{% endfor %}
+	<!-- <a href="{% url 'index' %}?item={{ item.id }}">Check this item out</a> -->
+	</p>
+
+{% elif form %}
+
+	{{ form.as_p }}
 
 {% else %}
 
-<p>There is no item associated with this item number.</p>
+	<p>There is no item associated with this item number.</p>
 
 {% endif %}
 

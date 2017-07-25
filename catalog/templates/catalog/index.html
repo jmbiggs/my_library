@@ -2,6 +2,109 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
 
-<a href="{% url 'browse' %}">Browse items</a> <br>
-<a href="{% url 'patron_lookup' %}">Lookup a Patron</a> <br>
-<a href="{% url 'checkout' %}">Check out</a>
+{% if item is not None %}
+	<p> checking out item: {{ item }}
+		{% if patron is None %}
+			<a href="{% url 'index' %}">Wrong item?</a>
+		{% else %}
+			<a href="{% url 'index' %}?patron={{ patron.id }}">Wrong item?</a>
+		{% endif %}
+	</p>
+{% endif %}
+
+{% if patron is not None %}
+	<p> checking out to patron: {{ patron.patron_name }}
+		{% if item is None %}
+			<a href="{% url 'index' %}">Wrong person?</a>
+		{% else %}
+			<a href="{% url 'index' %}?item={{ item.id }}">Wrong person?</a>				
+		{% endif %}
+	</p>
+{% endif %}
+
+{% if item is not None and patron is not None %}
+	
+	TODO:	Gotta check stuff out here...
+<!-- <p> -->
+<!-- <form action="{% url 'index' %}" method="get"> -->
+<!-- 	<input type="submit" value="Confirm Checkout"> -->
+<!-- </form> -->
+<!-- </p> -->
+	
+{% else %}
+	
+	<form action="{% url 'index' %}" method="get">
+		{{ mode_form }}
+		{{ search_form }}
+		
+		{% if patron is not None %}
+			<input type="hidden" name="patron" value="{{ patron.id }}">
+		{% endif %}
+		
+		{% if item is not None %}
+			<input type="hidden" name="item" value="{{ item.id }}">
+		{% endif %}
+
+		<input type="submit" value="Search">
+	</form>
+
+	{% if results is not None %}
+
+		{% if results.count == 0 %}
+			<p> No results found. </p>
+		{% elif results.count == 1 %}
+			<p> 1 result found. </p>
+		{% else %}
+			<p> {{ results.count }} results found. </p>
+		{% endif %}
+		
+		{% if mode == 'patron' %}
+			<ul>
+			{% for patron in results %}
+				<li>
+				<a href="{% url 'patron_record' patron.id %}">{{ patron }}</a>
+				<form action="{% url 'index' %}" method="get">
+					<input type="hidden" name="patron" value="{{ patron.id }}">
+					{% if item is not None %}
+						<input type="hidden" name="item" value="{{ item.id }}">
+					{% endif %}
+					<input type="submit" value="Check Out">
+				</form>
+				</li>
+			{% endfor %}
+			</ul>
+		{% else %}
+			<ul>
+				{% for item in results %}
+					<li>
+					<a href="{% url 'item_record' item.id %}">{{ item }}</a>
+
+					{% if item.is_checked_out %}
+						(Checked Out)
+						<form action="{% url 'index' %}" method="get">
+							<input type="hidden" name="item" value="{{ item.id }}">
+							{% if patron is not None %}
+								<input type="hidden" name="patron" value="{{ patron.id }}">
+							{% endif %}
+							<input type="submit" value="Check In">
+						</form>
+					{% else %}
+						(Available)
+						<form action="{% url 'index' %}" method="get">
+							<input type="hidden" name="item" value="{{ item.id }}">
+							{% if patron is not None %}
+								<input type="hidden" name="patron" value="{{ patron.id }}">
+							{% endif %}
+							<input type="submit" value="Check Out">
+						</form>
+					{% endif %}
+										
+					</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+	{% endif %}
+{% endif %}
+
+<p><a href="{% url 'new_patron' %}">Add a patron</a></p>
+<p><a href="{% url 'new_item' %}">Add an item</a></p>

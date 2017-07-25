@@ -1,26 +1,27 @@
 from django import forms
+from django.forms import ModelForm
 
-class PatronSearchForm(forms.Form):
-	p_query = forms.CharField(label='Patron search', max_length=100)
+from .models import Item, Patron, Author
 
-class PatronSearchTypeForm(forms.Form):
-	SEARCH_TYPES = (
-		('name', 'Name'),
-		('email', 'Email Address'),
-		('id', 'Patron ID #'),
+class SearchModeForm(forms.Form):
+	SEARCH_MODES = (
+		('item', 'Item'),
+		('patron', 'Patron'),
 	)
 	
-	p_query_type = forms.ChoiceField(label='', choices=SEARCH_TYPES)
+	mode = forms.ChoiceField(label='', choices=SEARCH_MODES)
 
-class ItemSearchForm(forms.Form):
-	i_query = forms.CharField(label='Item search', max_length=100)
+class SearchForm(forms.Form):
+	query = forms.CharField(label='', max_length=100, required=False)
 	
-class ItemSearchTypeForm(forms.Form):
-	SEARCH_TYPES = (
-		('title', 'Title'),
-		('author', 'Person'),
-		('type', 'Media Type'),
-		('id', 'Item ID #'),
-	)
-	
-	i_query_type = forms.ChoiceField(label='', choices=SEARCH_TYPES)
+class PatronForm(ModelForm):
+	class Meta:
+		model = Patron
+		fields = ['patron_name', 'email']
+
+class ItemForm(ModelForm):
+	class Meta:
+		model = Item
+		fields = ['media_type', 'catalog_id', 'isbn', 'upc', 'condition', 'notes', 'title', 'authors', 'shelf_location', 'publication_date', 'lost', 'api_link']
+
+#, 'aquisition_date', 'last_modified_date',
