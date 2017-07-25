@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.utils import timezone
 
 class Patron(models.Model):
 	patron_name = models.CharField(max_length=50)
@@ -131,9 +132,9 @@ class Item(models.Model):
 		return self.title + ' (' + self.media_type + ')'
 
 class CheckOut(models.Model):
-	check_in_date = models.DateTimeField(blank=True, null=True)
-	check_out_date = models.DateTimeField(auto_now_add=True)
-	due_date = models.DateTimeField()
+	check_in_date = models.DateField(blank=True, null=True)
+	check_out_date = models.DateField(auto_now_add=True)
+	due_date = models.DateField()
 	item = models.ForeignKey(Item)
 	patron = models.ForeignKey(Patron)
 

@@ -99,11 +99,16 @@
 
 {% if patron is not None and item is not None %}
 
+{% if checkout_object is None %}
 <p>
-<form action="{% url 'checkout' %}" method="get">
+<form action="{% url 'checkout' %}?patron={{ patron.id }}&item={{ item.id }}&confirm=true" method="post">{% csrf_token %}
 	<input type="submit" value="Confirm Checkout">
 </form>
 </p>
+{% else %} 
+<p>Checkout Successful! The due date is: {{ checkout_object.due_date }}</p>
+{% endif %}
+
 
 {% endif %}
 

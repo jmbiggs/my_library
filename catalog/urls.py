@@ -23,4 +23,5 @@ urlpatterns = [
 	
 	# check in
 	url(r'^checkin/$', views.checkin, name='checkin'),
+	
 ]

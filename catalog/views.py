@@ -4,6 +4,11 @@ from __future__ import unicode_literals
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
+import datetime
+from dateutil.relativedelta import relativedelta
+from django.utils import formats
+from django.utils import timezone
+
 
 from .forms import PatronSearchForm, PatronSearchTypeForm, ItemSearchForm, ItemSearchTypeForm
 from .models import Item, Patron, Author, CheckOut
@@ -71,6 +76,7 @@ def checkout(request):
 	patron_id = request.GET.get('patron')
 	p_query = request.GET.get('p_query')
 	p_query_type = request.GET.get('p_query_type')
+	confirm = request.GET.get('confirm')
 	
 	# default context objects
 	item = None
@@ -81,6 +87,7 @@ def checkout(request):
 	patron_form = None
 	patron_type_form = None
 	patron_results = None
+	checkout_object = None
 	
 	# item section	
 	if item_id is None:
@@ -106,15 +113,26 @@ def checkout(request):
 	else:
 		patron = get_object_or_404(Patron, pk=patron_id)			
 	
-	context = {'item': item, 'item_form': item_form, 'item_type_form': item_type_form, 'item_results': item_results, 'patron': patron, 'patron_form': patron_form, 'patron_type_form': patron_type_form, 'patron_results': patron_results}
+	
+	# actually do the checkout
+	if patron is not None and item is not None and confirm == 'true':
+		#checkout_object = checkout_item(item, patron)
+		due_date = datetime.datetime.now()
+		checkout_object = CheckOut(due_date=due_date, item=item, patron=patron)
+		checkout_object.save()
+	
+	context = {'item': item, 'item_form': item_form, 'item_type_form': item_type_form, 'item_results': item_results, 'patron': patron, 'patron_form': patron_form, 'patron_type_form': patron_type_form, 'patron_results': patron_results, 'checkout_object': checkout_object}
 
 	return render(request, 'catalog/checkout.html', context)
+
 
 def checkin(request):
 	context = {}
 	return render(request, 'catalog/checkin.html', context)
 
 # helpers
+
+
 
 def patron_query(query, query_type):
 	if query_type == 'name':
