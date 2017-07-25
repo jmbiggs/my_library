@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from dateutil.relativedelta import relativedelta
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
-import datetime
-from dateutil.relativedelta import relativedelta
-from django.utils import formats
-from django.utils import timezone
-
+from django.utils import formats, timezone
 
 from .forms import SearchModeForm, SearchForm, PatronForm, ItemForm
 from .models import Item, Patron, Author, CheckOut
+
+import datetime
 
 def index(request):
 	# get possible parameters passed to url
