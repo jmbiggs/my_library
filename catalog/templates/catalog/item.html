@@ -1,27 +1,46 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+</head>
+<body>
+	
+	{% if item %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+	<div class="object">
+		ID: {{ item.id }}<br>
+		TITLE: {{ item.title }}<br>
+		{% for author in item.authors.all %}
+			{{ author.author_type }} : {{ author.author_name }}<br>
+		{% endfor %}
+		MEDIA TYPE: {{ item.media_type }}<br>
+		{% for checkout in checkouts %}
+			CHECKED OUT TO: <a href="{% url 'patron_record' checkout.patron.id %}">{{ checkout.patron.patron_name }}</a> (due date: {{ checkout.due_date }})<br>
+		{% endfor %}
+		<a href="{% url 'checkout' %}?item={{ item.id }}">Check this item out</a>
+	</div>
 
-{% if item %}
+	{% else %}
+<!-- 	<p>ID: {{ item.id }}</p> -->
+<!--  -->
+<!-- 	{{ form.as_p }} -->
+<!--  -->
+<!-- 	{% for checkout in checkouts %} -->
+<!-- 		CHECKED OUT TO: <a href="{% url 'patron_record' checkout.patron.id %}">{{ checkout.patron.patron_name }}</a> (due date: {{ checkout.due_date }})<br> -->
+<!-- 	{% endfor %} -->
+<!-- 	<!-- <a href="{% url 'index' %}?item={{ item.id }}">Check this item out</a> --> -->
+<!-- 	</p> -->
+<!--  -->
+<!-- {% elif form %} -->
+<!--  -->
+<!-- 	{{ form.as_p }} -->
 
-	<p>ID: {{ item.id }}</p>
+	<div class="object">There is no item associated with this item number.</div>
 
-	{{ form.as_p }}
+	{% endif %}
 
-	{% for checkout in checkouts %}
-		CHECKED OUT TO: <a href="{% url 'patron_record' checkout.patron.id %}">{{ checkout.patron.patron_name }}</a> (due date: {{ checkout.due_date }})<br>
-	{% endfor %}
-	<!-- <a href="{% url 'index' %}?item={{ item.id }}">Check this item out</a> -->
-	</p>
-
-{% elif form %}
-
-	{{ form.as_p }}
-
-{% else %}
-
-	<p>There is no item associated with this item number.</p>
-
-{% endif %}
+</body>
 
 <a href="{% url 'index' %}">Home</a>
+</html>
