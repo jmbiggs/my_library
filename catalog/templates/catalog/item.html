@@ -21,8 +21,20 @@
 		<a href="{% url 'checkout' %}?item={{ item.id }}">Check this item out</a>
 	</div>
 
-
 	{% else %}
+<!-- 	<p>ID: {{ item.id }}</p> -->
+<!--  -->
+<!-- 	{{ form.as_p }} -->
+<!--  -->
+<!-- 	{% for checkout in checkouts %} -->
+<!-- 		CHECKED OUT TO: <a href="{% url 'patron_record' checkout.patron.id %}">{{ checkout.patron.patron_name }}</a> (due date: {{ checkout.due_date }})<br> -->
+<!-- 	{% endfor %} -->
+<!-- 	<!-- <a href="{% url 'index' %}?item={{ item.id }}">Check this item out</a> --> -->
+<!-- 	</p> -->
+<!--  -->
+<!-- {% elif form %} -->
+<!--  -->
+<!-- 	{{ form.as_p }} -->
 
 	<div class="object">There is no item associated with this item number.</div>
 

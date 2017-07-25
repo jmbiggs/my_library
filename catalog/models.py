@@ -130,6 +130,10 @@ class Item(models.Model):
 
 	def __str__(self):
 		return self.title + ' (' + self.media_type + ')'
+		
+	def is_checked_out(self):
+		checkouts = CheckOut.objects.filter(item_id=self.id).filter(check_in_date__isnull=True)		
+		return checkouts.exists()	
 
 class CheckOut(models.Model):
 	check_in_date = models.DateField(blank=True, null=True)
