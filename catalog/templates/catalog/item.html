@@ -2,11 +2,23 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
 
+{% if updated is not None %}
+	{% if updated %}
+		<p>Item was successfully saved.</p>
+	{% else %}
+		<p>Item was not successfully saved.</p>
+	{% endif %}
+{% endif %}
+
 {% if item %}
 
 	<p>ID: {{ item.id }}</p>
 
-	{{ form.as_p }}
+	<form action="{% url 'item_record' item.id %}" method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Save">
+	</form>
 
 	{% for checkout in checkouts %}
 		CHECKED OUT TO: <a href="{% url 'patron_record' checkout.patron.id %}">{{ checkout.patron.patron_name }}</a> (due date: {{ checkout.due_date }})<br>
@@ -16,7 +28,11 @@
 
 {% elif form %}
 
-	{{ form.as_p }}
+	<form action="{% url 'new_item' %}" method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Save">
+	</form>
 
 {% else %}
 

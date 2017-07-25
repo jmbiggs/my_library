@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
 
@@ -48,40 +48,73 @@ def index(request):
 	return render(request, 'catalog/index.html', context)
 
 def new_item(request):
-	form = ItemForm()
-	context = {'form': form}
+	if request.method == 'POST':
+		form = ItemForm(request.POST)
+		if form.is_valid():
+			form.save()
+			updated = True
+		else:
+			updated = False
+	else:	
+		form = ItemForm()
+		updated = None
+		
+	context = {'form': form, 'updated': updated}
 	return render(request, 'catalog/item.html', context)
 
 def item_record(request, item_id):
 	item = get_object_or_404(Item, pk=item_id)
 	
-	if item:
-		form = ItemForm(instance=item)
+	if request.method == 'POST':
+		form = ItemForm(request.POST, instance=item)
+		if form.is_valid():
+			form.save()
+			updated = True
+		else:
+			updated = False
+
 	else:
-		form = None
+		form = ItemForm(instance=item)
+		updated = None
 	
 	checkouts = CheckOut.objects.filter(item_id=item_id).filter(check_in_date__isnull=True)
 	
-	context = {'item': item, 'form': form, 'checkouts': checkouts}
+	context = {'item': item, 'form': form, 'updated': updated, 'checkouts': checkouts}
 	return render(request, 'catalog/item.html', context)
 	
 def new_patron(request):
-	form = PatronForm()
-	context = {'form': form}
+	if request.method == 'POST':
+		form = PatronForm(request.POST)
+		if form.is_valid():
+			form.save()
+			updated = True
+		else:
+			updated = False
+	else:	
+		form = PatronForm()
+		updated = None
+
+	context = {'form': form, 'updated': updated}
 	return render(request, 'catalog/patron_record.html', context)
 	
 def patron_record(request, patron_id):
 	patron = get_object_or_404(Patron, pk=patron_id)
 	
-	if patron:
-		form = PatronForm(instance=patron)
+	if request.method == 'POST':
+		form = PatronForm(request.POST, instance=patron)
+		if form.is_valid():
+			form.save()
+			updated = True
+		else:
+			updated = False
 	else:
-		form = None
+		form = PatronForm(instance=patron)
+		updated = None
 
 	current_checkouts = CheckOut.objects.filter(patron=patron).filter(check_in_date__isnull=True)
 	old_checkouts = CheckOut.objects.filter(patron=patron).filter(check_in_date__isnull=False)
 	
-	context = {'patron': patron, 'form': form, 'current_checkouts': current_checkouts, 'old_checkouts': old_checkouts}
+	context = {'patron': patron, 'form': form, 'updated': updated, 'current_checkouts': current_checkouts, 'old_checkouts': old_checkouts}
 	return render(request, 'catalog/patron_record.html', context)
 
 # helpers
@@ -111,23 +144,6 @@ def item_query(query):
 	title_query = Q(title__icontains=query)
 	author_query = Q(authors__author_name__icontains=query)			
 	return Item.objects.filter(id_query | title_query | author_query).distinct()
-
-#def item_record(item):
-#	id_str = "ID: " + item.id + "\n" 
-#	title_str = "TITLE: " + item.title + "\n"
-#	authors_str = ""	
-#	for author in item.authors.all:
-#		authors_str += author.author_type + ": " + author.author_name + "\n"
-#	media_str = "MEDIA TYPE: " + item.media_type + "\n"
-#		
-#	checkouts_str = ""
-#	checkouts = CheckOut.objects.filter(item_id=item_id).filter(check_in_date__isnull=True)
-#	if (checkouts.exists()):
-#		checkouts_str += "\n"
-#		# note: there should only be at most one checkout, but i'm putting this here in case something goes wrong so that it will be visible
-#		for checkout in checkouts:
-#			checkouts_str += "CHECKED OUT TO: " + checkout.patron.patron_name  + "(due date: " + checkout.due_date + ")\n"
-##<a href="{% url 'patron_record' checkout.patron.id %}">{{
 
 def is_int(string):
 	try:
