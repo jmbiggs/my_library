@@ -1,17 +1,24 @@
 {% load static %}
-
-<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+</head>
+<body>
 
 {% if updated is not None %}
+<div class="object">
 	{% if updated %}
 		<p>Item was successfully saved.</p>
 	{% else %}
 		<p>Item was not successfully saved.</p>
 	{% endif %}
+</div>
 {% endif %}
 
 {% if item %}
 
+<div class="object">
 	<p>ID: {{ item.id }}</p>
 
 	<form action="{% url 'item_record' item.id %}" method="post">
@@ -25,19 +32,27 @@
 	{% endfor %}
 	<!-- <a href="{% url 'index' %}?item={{ item.id }}">Check this item out</a> -->
 	</p>
+</div>
 
 {% elif form %}
 
+<div class="object">
 	<form action="{% url 'new_item' %}" method="post">
 		{% csrf_token %}
 		{{ form.as_p }}
 		<input type="submit" value="Save">
 	</form>
+</div>
 
 {% else %}
 
-	<p>There is no item associated with this item number.</p>
+<div class="object">
+	There is no item associated with this item number.
+</div>
 
 {% endif %}
 
-<a href="{% url 'index' %}">Home</a>
+<p> <a href="{% url 'index' %}">Home</a> </p>
+
+</body>
+</html>
