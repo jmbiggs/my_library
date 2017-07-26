@@ -1,36 +1,52 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from dateutil.relativedelta import relativedelta
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
-import datetime
-from dateutil.relativedelta import relativedelta
-from django.utils import formats
-from django.utils import timezone
-
+from django.utils import formats, timezone
 
 from .forms import SearchModeForm, SearchForm, PatronForm, ItemForm
 from .models import Item, Patron, Author, CheckOut
 
+import datetime
+
 def index(request):
-	# get possible parameters passed to url
-	search_mode = request.GET.get('mode')
-	query = request.GET.get('query')
-	item_id = request.GET.get('item')
-	patron_id = request.GET.get('patron')
+	# get url parameters (depending on request type)
+	if request.method == 'POST':
+		search_mode = None
+		query = None
+		item_id = request.POST.get('item')
+		patron_id = request.POST.get('patron')
+	else:	
+		search_mode = request.GET.get('mode')
+		query = request.GET.get('query')
+		item_id = request.GET.get('item')
+		patron_id = request.GET.get('patron')
 	
+	# get item and patron
 	if item_id is not None:
 		item = get_object_or_404(Item, pk=item_id)
 	else:
-		item = None
-		
+		item = None		
 	if patron_id is not None:
 		patron = get_object_or_404(Patron, pk=patron_id)			
 	else:
 		patron = None
+		
+	# perform check out (POST is only used for checking out currently)
+	if request.method == 'POST':
+		checkout_object = checkout(patron, item)
+		if checkout_object is not None:
+			# clear the item, but keep patron 'logged in'
+			item = None
+	else:
+		checkout_object = None
 			
+	# set up search mode form
+	# - if user hasn't specified a choice, use item as default- unless an item has already been specified
 	if search_mode is None:
 		if item is not None:
 			search_mode = 'patron'
@@ -38,6 +54,7 @@ def index(request):
 			search_mode = 'item'
 	mode_form = SearchModeForm({'mode': search_mode})
 
+	# perform search if necessary
 	if query is None:
 		search_form = SearchForm()
 		results = None
@@ -47,73 +64,95 @@ def index(request):
 			results = patron_query(query)
 		else:
 			results = item_query(query)
-	
-	context = {'mode': search_mode, 'mode_form': mode_form, 'search_form': search_form, 'item': item, 'results': results, 'patron': patron}
+		
+	context = {'mode': search_mode, 'mode_form': mode_form, 'search_form': search_form, 'item': item, 'results': results, 'patron': patron, 'checkout_object': checkout_object}
 
 	return render(request, 'catalog/index.html', context)
 
 def new_item(request):
-	form = ItemForm()
-	context = {'form': form}
+	if request.method == 'POST':
+		form = ItemForm(request.POST)
+		if form.is_valid():
+			form.save()
+			updated = True
+		else:
+			updated = False
+	else:
+		form = ItemForm()
+		updated = None
+		
+	context = {'form': form, 'updated': updated}
 	return render(request, 'catalog/item.html', context)
 
 def item_record(request, item_id):
 	item = get_object_or_404(Item, pk=item_id)
 	
-	if item:
-		form = ItemForm(instance=item)
+	if request.method == 'POST':
+		form = ItemForm(request.POST, instance=item)
+		if form.is_valid():
+			form.save()
+			updated = True
+		else:
+			updated = False
+
 	else:
-		form = None
+		form = ItemForm(instance=item)
+		updated = None
 	
 	checkouts = CheckOut.objects.filter(item_id=item_id).filter(check_in_date__isnull=True)
 	
-	context = {'item': item, 'form': form, 'checkouts': checkouts}
+	context = {'item': item, 'form': form, 'updated': updated, 'checkouts': checkouts}
 	return render(request, 'catalog/item.html', context)
 	
 def new_patron(request):
-	form = PatronForm()
-	context = {'form': form}
+	if request.method == 'POST':
+		form = PatronForm(request.POST)
+		if form.is_valid():
+			form.save()
+			updated = True
+		else:
+			updated = False
+	else:	
+		form = PatronForm()
+		updated = None
+
+	context = {'form': form, 'updated': updated}
 	return render(request, 'catalog/patron_record.html', context)
 	
 def patron_record(request, patron_id):
 	patron = get_object_or_404(Patron, pk=patron_id)
 	
-	if patron:
-		form = PatronForm(instance=patron)
+	if request.method == 'POST':
+		form = PatronForm(request.POST, instance=patron)
+		if form.is_valid():
+			form.save()
+			updated = True
+		else:
+			updated = False
 	else:
-		form = None
+		form = PatronForm(instance=patron)
+		updated = None
 
+	# get patron's checkout records
 	current_checkouts = CheckOut.objects.filter(patron=patron).filter(check_in_date__isnull=True)
 	old_checkouts = CheckOut.objects.filter(patron=patron).filter(check_in_date__isnull=False)
 	
-	context = {'patron': patron, 'form': form, 'current_checkouts': current_checkouts, 'old_checkouts': old_checkouts}
+	context = {'patron': patron, 'form': form, 'updated': updated, 'current_checkouts': current_checkouts, 'old_checkouts': old_checkouts}
 	return render(request, 'catalog/patron_record.html', context)
 
-#<<<<<<< HEAD
-#def checkout(request):
-#	# get possible parameters passed to url
-#	item_id = request.GET.get('item')
-#	i_query = request.GET.get('i_query')
-#	i_query_type = request.GET.get('i_query_type')
-#	patron_id = request.GET.get('patron')
-#	p_query = request.GET.get('p_query')
-#	p_query_type = request.GET.get('p_query_type')
-#	confirm = request.GET.get('confirm')
-#	
-#	# default context objects
-#	item = None
-#	item_form = None
-#	item_type_form = None
-#	item_results = None
-#	patron = None
-#	patron_form = None
-#	patron_type_form = None
-#	patron_results = None
-#	checkout_object = None
-#=======
+# database functions
 
-# helpers
+# checkout item to patron (changes database)
+def checkout(patron, item):
+	if patron is not None and item is not None:
+		due_date = datetime.datetime.now()
+		checkout_object = CheckOut(due_date=due_date, item=item, patron=patron)
+		checkout_object.save()
+		return checkout_object
+	else:
+		return None
 
+# run a patron search on the database using given query
 def patron_query(query):
 	if query == '':
 		return Patron.objects.all()
@@ -122,41 +161,12 @@ def patron_query(query):
 		id_query = Q(pk=query)
 	else:
 		id_query =  Q()
-#		item = get_object_or_404(Item, pk=item_id)
-#		
-#	# patron section
-#	if patron_id is None:
-#		if p_query is None:
-#			patron_form = PatronSearchForm()
-#			patron_type_form = PatronSearchTypeForm()
-#		else:
-#			patron_results = patron_query(p_query, p_query_type)
-#			patron_form = PatronSearchForm({'p_query': p_query})
-#			patron_type_form = PatronSearchTypeForm({'p_query_type': p_query_type})
-#	else:
-#		patron = get_object_or_404(Patron, pk=patron_id)			
-#	
-#	
-#	# actually do the checkout
-#	if patron is not None and item is not None and confirm == 'true':
-#		#checkout_object = checkout_item(item, patron)
-#		due_date = datetime.datetime.now()
-#		checkout_object = CheckOut(due_date=due_date, item=item, patron=patron)
-#		checkout_object.save()
-#	
-#	context = {'item': item, 'item_form': item_form, 'item_type_form': item_type_form, 'item_results': item_results, 'patron': patron, 'patron_form': patron_form, 'patron_type_form': patron_type_form, 'patron_results': patron_results, 'checkout_object': checkout_object}
-#
-#	return render(request, 'catalog/checkout.html', context)
-#
-#
-#def checkin(request):
-#	context = {}
-#	return render(request, 'catalog/checkin.html', context)
 		
 	name_query = Q(patron_name__icontains=query)
 	email_query = Q(email__icontains=query)
 	return Patron.objects.filter(id_query | name_query | email_query).distinct()
-	
+
+# run an item search on the database using given query	
 def item_query(query):
 	if query == '':
 		return Item.objects.all()
@@ -170,23 +180,9 @@ def item_query(query):
 	author_query = Q(authors__author_name__icontains=query)			
 	return Item.objects.filter(id_query | title_query | author_query).distinct()
 
-#def item_record(item):
-#	id_str = "ID: " + item.id + "\n" 
-#	title_str = "TITLE: " + item.title + "\n"
-#	authors_str = ""	
-#	for author in item.authors.all:
-#		authors_str += author.author_type + ": " + author.author_name + "\n"
-#	media_str = "MEDIA TYPE: " + item.media_type + "\n"
-#		
-#	checkouts_str = ""
-#	checkouts = CheckOut.objects.filter(item_id=item_id).filter(check_in_date__isnull=True)
-#	if (checkouts.exists()):
-#		checkouts_str += "\n"
-#		# note: there should only be at most one checkout, but i'm putting this here in case something goes wrong so that it will be visible
-#		for checkout in checkouts:
-#			checkouts_str += "CHECKED OUT TO: " + checkout.patron.patron_name  + "(due date: " + checkout.due_date + ")\n"
-##<a href="{% url 'patron_record' checkout.patron.id %}">{{
+# helpers
 
+# returns whether given string can be parsed as an integer
 def is_int(string):
 	try:
 		int(string)

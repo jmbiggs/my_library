@@ -2,11 +2,23 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
 
+{% if updated is not None %}
+	{% if updated %}
+		<p>Patron was successfully saved.</p>
+	{% else %}
+		<p>Patron was not successfully saved.</p>
+	{% endif %}
+{% endif %}
+
 {% if patron %}
 
 	<p>Patron ID: {{ patron.id }}</p>
 	
-	{{ form.as_p }}
+	<form action="{% url 'patron_record' patron.id %}" method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Save">
+	</form>
 	
 	<!-- <a href="{% url 'index' %}?patron={{ patron.id }}"> Check Out an item </a> -->
 
@@ -28,7 +40,11 @@
 
 {% elif form %}
 
-	{{ form.as_p }}
+	<form action="{% url 'new_patron' %}" method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Save">
+	</form>
 
 {% else %}
 

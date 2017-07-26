@@ -32,9 +32,9 @@
 <!-- 	<div class="object"> -->
 <!-- 	<nav class="clearfix"> -->
 <!-- 		<ul class="clearfix"> -->
-<!-- 			<li><a href="{% url 'browse' %}">BROWSE ITEMS</a></li> -->
-<!-- 			<li><a href="{% url 'patron_lookup' %}">LOOKUP A PATRON</a></li> -->
-<!-- 			<li><a href="{% url 'checkout' %}">CHECKOUT</a></li> -->
+<!-- 			<li><a href="{% url 'index' %}">BROWSE ITEMS</a></li> -->
+<!-- 			<li><a href="{% url 'index' %}">LOOKUP A PATRON</a></li> -->
+<!-- 			<li><a href="{% url 'index' %}">CHECKOUT</a></li> -->
 <!-- 		</ul> -->
 <!-- 		<a href="#" id="pull">Menu</a> -->
 <!-- 		 -->
@@ -45,17 +45,21 @@
 <!-- 	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Seshat.svg/220px-Seshat.svg.png"> -->
 <!-- 	<h1>library catalog</h1> -->
 <!-- 	<div class="object"> -->
-<!-- 		<a href="{% url 'browse' %}">BROWSE ITEMS</a> -->
+<!-- 		<a href="{% url 'index' %}">BROWSE ITEMS</a> -->
 <!-- 	</div> -->
 <!-- 	<div class="object"> -->
-<!-- 		<a href="{% url 'patron_lookup' %}">LOOKUP A PATRON</a>  -->
+<!-- 		<a href="{% url 'index' %}">LOOKUP A PATRON</a>  -->
 <!-- 	</div> -->
 <!-- 	<div class="object"> -->
-<!-- 		<a href="{% url 'checkout' %}">CHECKOUT</a> -->
+<!-- 		<a href="{% url 'index' %}">CHECKOUT</a> -->
 <!-- 	</div> -->
 <!--  -->
 <!-- 	 -->
 <!-- </div> -->
+
+{% if checkout_object is not None %}
+	<p>Checkout Successful! The due date is: {{ checkout_object.due_date }}</p>
+{% endif %}
 
 {% if item is not None %}
 	<p> checking out item: {{ item }}
@@ -78,14 +82,12 @@
 {% endif %}
 
 {% if item is not None and patron is not None %}
-	
-	TODO:	Gotta check stuff out here...
-<!-- <p> -->
-<!-- <form action="{% url 'index' %}" method="get"> -->
-<!-- 	<input type="submit" value="Confirm Checkout"> -->
-<!-- </form> -->
-<!-- </p> -->
-	
+	<p> <form action="{% url 'index' %}" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="patron" value="{{ patron.id }}">
+		<input type="hidden" name="item" value="{{ item.id }}">
+		<input type="submit" value="Confirm Checkout">
+	</form> </p>
 {% else %}
 	
 	<form action="{% url 'index' %}" method="get">
