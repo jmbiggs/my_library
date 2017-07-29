@@ -61,6 +61,10 @@
 	<p>Checkout Successful! The due date is: {{ checkout_object.due_date }}</p>
 {% endif %}
 
+{% if checkedin_item is not None %}
+	<p>{{ checkedin_item.title }} was successfully checked in.</p>
+{% endif %}
+
 {% if item is not None %}
 	<p> checking out item: {{ item }}
 		{% if patron is None %}
@@ -86,6 +90,7 @@
 		{% csrf_token %}
 		<input type="hidden" name="patron" value="{{ patron.id }}">
 		<input type="hidden" name="item" value="{{ item.id }}">
+		<input type="hidden" name="action" value="checkout">
 		<input type="submit" value="Confirm Checkout">
 	</form> </p>
 {% else %}
@@ -138,11 +143,13 @@
 
 					{% if item.is_checked_out %}
 						(Checked Out)
-						<form action="{% url 'index' %}" method="get">
+						<form action="{% url 'index' %}" method="post">
+							{% csrf_token %}
 							<input type="hidden" name="item" value="{{ item.id }}">
 							{% if patron is not None %}
 								<input type="hidden" name="patron" value="{{ patron.id }}">
 							{% endif %}
+							<input type="hidden" name="action" value="checkin">
 							<input type="submit" value="Check In">
 						</form>
 					{% else %}

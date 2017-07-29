@@ -136,9 +136,9 @@ class Item(models.Model):
 		return checkouts.exists()	
 
 class CheckOut(models.Model):
-	check_in_date = models.DateField(blank=True, null=True)
-	check_out_date = models.DateField(auto_now_add=True)
-	due_date = models.DateField()
+	check_in_date = models.DateTimeField(blank=True, null=True)
+	check_out_date = models.DateTimeField(auto_now_add=True)
+	due_date = models.DateTimeField()
 	item = models.ForeignKey(Item)
 	patron = models.ForeignKey(Patron)
 

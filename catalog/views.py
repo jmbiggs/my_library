@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from dateutil.relativedelta import relativedelta
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -11,8 +10,6 @@ from django.utils import formats, timezone
 from .forms import SearchModeForm, SearchForm, PatronForm, ItemForm
 from .models import Item, Patron, Author, CheckOut
 
-import datetime
-
 def index(request):
 	# get url parameters (depending on request type)
 	if request.method == 'POST':
@@ -20,6 +17,7 @@ def index(request):
 		query = None
 		item_id = request.POST.get('item')
 		patron_id = request.POST.get('patron')
+		action = request.POST.get('action')
 	else:	
 		search_mode = request.GET.get('mode')
 		query = request.GET.get('query')
@@ -36,14 +34,19 @@ def index(request):
 	else:
 		patron = None
 		
-	# perform check out (POST is only used for checking out currently)
+	checkout_object = None
+	checkedin_item = None
 	if request.method == 'POST':
-		checkout_object = checkout(patron, item)
-		if checkout_object is not None:
-			# clear the item, but keep patron 'logged in'
+		if action == 'checkin':
+			checkin(item)
+			checkedin_item = item
 			item = None
-	else:
-		checkout_object = None
+
+		elif action == 'checkout':
+			checkout_object = checkout(patron, item)
+			if checkout_object is not None:
+				# clear the item, but keep patron 'logged in'
+				item = None
 			
 	# set up search mode form
 	# - if user hasn't specified a choice, use item as default- unless an item has already been specified
@@ -65,7 +68,7 @@ def index(request):
 		else:
 			results = item_query(query)
 		
-	context = {'mode': search_mode, 'mode_form': mode_form, 'search_form': search_form, 'item': item, 'results': results, 'patron': patron, 'checkout_object': checkout_object}
+	context = {'mode': search_mode, 'mode_form': mode_form, 'search_form': search_form, 'item': item, 'results': results, 'patron': patron, 'checkout_object': checkout_object, 'checkedin_item': checkedin_item}
 
 	return render(request, 'catalog/index.html', context)
 
@@ -145,12 +148,22 @@ def patron_record(request, patron_id):
 # checkout item to patron (changes database)
 def checkout(patron, item):
 	if patron is not None and item is not None:
-		due_date = datetime.datetime.now()
+		if item.is_checked_out():
+			checkin(item)
+		
+		due_date = timezone.now()
 		checkout_object = CheckOut(due_date=due_date, item=item, patron=patron)
 		checkout_object.save()
 		return checkout_object
 	else:
 		return None
+		
+# check item in (changes database)
+def checkin(item):
+	checkouts = CheckOut.objects.filter(item_id=item.id).filter(check_in_date__isnull=True)
+	for checkout in checkouts:
+		checkout.check_in_date = timezone.now()
+		checkout.save()
 
 # run a patron search on the database using given query
 def patron_query(query):
