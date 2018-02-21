@@ -21,8 +21,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'lhv!s#jg&6@cc8vrya(#(@)7e(9)t-%l6$&fqpmikwbxd#3j$q'
-SECRET_KEY = "{{ secret_key }}"
+SECRET_KEY = 'lhv!s#jg&6@cc8vrya(#(@)7e(9)t-%l6$&fqpmikwbxd#3j$q'
+# SECRET_KEY = "{{ secret_key }}"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -133,5 +133,5 @@ STATIC_URL = '/static/'
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-	os.path.join(BASE_DIR, 'static'),
+	os.path.join(BASE_DIR, 'catalog', 'static'),
 )
