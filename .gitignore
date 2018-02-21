@@ -16,5 +16,7 @@ __pycache__/
 __pycache__/
 local_settings.py
 
+venv
+staticfiles
 .env
 db.sqlite3
