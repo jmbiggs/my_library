@@ -4,13 +4,14 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [dev-packages]
 
 [packages]
-
-dj-database-url = "==0.4.2"
-django = "==1.11"
-gunicorn = "==19.7.1"
-"psycopg2" = "==2.7.3.2"
+django = "*"
+gunicorn = "*"
+django-heroku = "*"
+psycopg2 = "*"
 whitenoise = "*"
+
+[requires]
+python_version = "3.6"
