@@ -139,8 +139,14 @@ class CheckOut(models.Model):
 	check_in_date = models.DateTimeField(blank=True, null=True)
 	check_out_date = models.DateTimeField(auto_now_add=True)
 	due_date = models.DateTimeField()
-	item = models.ForeignKey(Item)
-	patron = models.ForeignKey(Patron)
+	item = models.ForeignKey(
+		Item,
+		on_delete = models.CASCADE
+	)
+	patron = models.ForeignKey(
+		Patron,
+		on_delete = models.CASCADE
+	)
 
 	def __str__(self):
 		return str(self.id) + ' (' + self.patron.patron_name + ') ' + self.item.title
