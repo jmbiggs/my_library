@@ -22,6 +22,6 @@ class PatronForm(ModelForm):
 class ItemForm(ModelForm):
 	class Meta:
 		model = Item
-		fields = ['media_type', 'catalog_id', 'isbn', 'upc', 'condition', 'notes', 'title', 'authors', 'shelf_location', 'publication_date', 'lost', 'api_link']
+		fields = ['media_type', 'title', 'authors', 'shelf_location', 'publication_date', 'catalog_id', 'isbn', 'upc', 'condition', 'notes', 'lost', 'api_link']
 
 #, 'aquisition_date', 'last_modified_date',

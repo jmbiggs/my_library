@@ -114,7 +114,7 @@ class Item(models.Model):
 		max_length=50,
 		choices=MEDIA_TYPE_CHOICES,
 	)	
-	catalog_id = models.CharField(max_length=50)
+	catalog_id = models.CharField(max_length=50, blank=True, null=True)
 	isbn = models.CharField(max_length=13, blank=True, null=True)
 	upc = models.CharField(max_length=12, blank=True, null=True)
 	condition = models.CharField(max_length=50, blank=True, null=True)
