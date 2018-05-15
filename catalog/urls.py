@@ -1,6 +1,8 @@
 from django.conf.urls import url
 
 from . import views
+from .views import AuthorAutoComplete
+from .models import Author
 
 urlpatterns = [
 	# index
@@ -17,4 +19,7 @@ urlpatterns = [
 
 	# patron record
 	url(r'^patron/(?P<patron_id>[0-9]+)/$', views.patron_record, name='patron_record'),
+	
+	# author auto complete data
+	url(r'^author-autocomplete/$', AuthorAutoComplete.as_view(create_field='author_name'), name='author-autocomplete'),
 ]

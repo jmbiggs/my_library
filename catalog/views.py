@@ -10,6 +10,17 @@ from django.utils import formats, timezone
 from .forms import SearchModeForm, SearchForm, PatronForm, ItemForm
 from .models import Item, Patron, Author, CheckOut
 
+from dal import autocomplete
+
+class AuthorAutoComplete(autocomplete.Select2QuerySetView):
+	def get_queryset(self):
+		qs = Author.objects.all()
+		
+		if self.q:
+			qs = qs.filter(Q(author_name__icontains=self.q))
+		
+		return qs
+
 def index(request):
 	# get url parameters (depending on request type)
 	if request.method == 'POST':

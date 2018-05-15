@@ -8,8 +8,9 @@ name = "pypi"
 
 [packages]
 django = "*"
-gunicorn = "*"
+django-autocomplete-light = "*"
 django-heroku = "*"
+gunicorn = "*"
 psycopg2 = "*"
 whitenoise = "*"
 

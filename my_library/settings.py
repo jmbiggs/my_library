@@ -33,7 +33,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-	'catalog.apps.CatalogConfig',
+    'dal',    # for django-autocomplete-light
+    'dal_select2', # for django-autocomplete-light
+    'catalog.apps.CatalogConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

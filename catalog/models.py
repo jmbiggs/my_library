@@ -9,7 +9,7 @@ class Patron(models.Model):
 	email = models.EmailField()
 	
 	def __str__(self):
-		return self.patron_name
+		return self.patron_name + ' (' + self.email + ') ID: ' + str(self.id)
 	
 class Author(models.Model):
 	# group types
