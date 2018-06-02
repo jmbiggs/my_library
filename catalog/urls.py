@@ -9,8 +9,9 @@ urlpatterns = [
 	url(r'^$', views.index, name='index'),
 	
 	# new item record
+	url(r'^authors.html$', views.new_item, name='new_item'),
 	url(r'^item/$', views.new_item, name='new_item'),
-	
+		
 	# item record
 	url(r'^item/(?P<item_id>[0-9]+)/$', views.item_record, name='item_record'),	
 

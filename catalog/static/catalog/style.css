@@ -17,6 +17,10 @@ a:visited {
 	color: cyan;
 }
 
+.select2-results {
+  color: black;
+}
+
 img {
     max-width: 100px;
 }

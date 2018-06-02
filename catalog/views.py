@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.utils import formats, timezone
 
-from .forms import SearchModeForm, SearchForm, PatronForm, ItemForm
+from .forms import SearchModeForm, SearchForm, PatronForm, ItemForm, AuthorshipForm
 from .models import Item, Patron, Author, CheckOut
 
 from dal import autocomplete
@@ -84,18 +84,24 @@ def index(request):
 	return render(request, 'catalog/index.html', context)
 
 def new_item(request):
+	authors_template='catalog/authors.html'
+	
 	if request.method == 'POST':
+		author_form = AuthorshipForm(request.POST)
 		form = ItemForm(request.POST)
-		if form.is_valid():
+		if author_form.is_valid() and not author_form.is_blank():
+			author_form.save()
+		if form.is_valid():		
 			form.save()
 			updated = True
 		else:
 			updated = False
 	else:
 		form = ItemForm()
+		author_form = AuthorshipForm()
 		updated = None
 		
-	context = {'form': form, 'updated': updated}
+	context = {'form': form, 'author_form': author_form, 'updated': updated, 'authors_template': authors_template}
 	return render(request, 'catalog/item.html', context)
 
 def item_record(request, item_id):
@@ -201,7 +207,7 @@ def item_query(query):
 		id_query = Q()
 
 	title_query = Q(title__icontains=query)
-	author_query = Q(authors__author_name__icontains=query)			
+	author_query = Q(authors__author__author_name__icontains=query)			
 	return Item.objects.filter(id_query | title_query | author_query).distinct()
 
 # helpers

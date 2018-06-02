@@ -11,7 +11,13 @@ class Patron(models.Model):
 	def __str__(self):
 		return self.patron_name + ' (' + self.email + ') ID: ' + str(self.id)
 	
-class Author(models.Model):
+class Author(models.Model):		
+	author_name = models.CharField(max_length=50)
+	
+	def __str__(self):
+		return self.author_name
+	
+class Authorship(models.Model):
 	# group types
 	BOOK = 'book'
 	FILM = 'film'
@@ -22,13 +28,15 @@ class Author(models.Model):
 	ILLUSTRATOR = 'illustrator'
 	INTRODUCTION = 'introduction'
 	TRANSLATOR = 'translator'
-	
+		
 	# film types
 	DIRECTOR = 'director'
 	CAST = 'cast'
 	WRITER = 'writer'
 	EDITOR = 'editor'
-	COMPOSER = 'composer'	
+	COMPOSER = 'composer'
+	DIRECTOR_OF_PHOTOGRAPHY = 'director_of_photography'
+	PRODUCER = 'producer'	
 	
 	# music types
 	ARTIST = 'artist'
@@ -46,22 +54,28 @@ class Author(models.Model):
 			(WRITER, 'Writer'),
 			(EDITOR, 'Editor'),
 			(COMPOSER, 'Composer'),
+			(DIRECTOR_OF_PHOTOGRAPHY, 'Director of Photography'),
+			(PRODUCER, 'Producer'),
 		)),
 		(MUSIC, (
 			(ARTIST, 'Artist'),
 		)),
 	)
 	
-	author_name = models.CharField(max_length=50)
 	author_type = models.CharField(
 		max_length=50,
 		choices=AUTHOR_TYPE_CHOICES,
 		default=AUTHOR,
 	)
+
+	author = models.ForeignKey(
+		Author,
+		on_delete = models.CASCADE
+	)
 	
 	def __str__(self):
-		return self.author_name + ' (' + self.author_type + ')'
-	
+		return self.author + ' (' + self.author_type + ')'
+		
 class Item(models.Model):
 	# media type groups
 	BOOK = 'book'
@@ -122,7 +136,7 @@ class Item(models.Model):
 	last_modified_date = models.DateTimeField(auto_now=True, null=True)
 	notes = models.TextField(blank=True, null=True)
 	title = models.CharField(max_length=50)
-	authors = models.ManyToManyField(Author, blank=True)
+	authors = models.ManyToManyField(Authorship, blank=True)
 	shelf_location = models.CharField(max_length=50, blank=True, null=True)
 	publication_date = models.DateField(blank=True, null=True)
 	lost = models.BooleanField(default=False)

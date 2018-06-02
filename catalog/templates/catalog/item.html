@@ -3,21 +3,53 @@
 <html lang="en-US">
 <head>
 	<link rel="stylesheet" type="text/css" href="{% static 'catalog/style.css' %}" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script>
+	// this function triggers when the media type selection changes, and it reloads the embedded authors.html
+	function display_authors(form)
+	{			
+		var op = form.options[form.selectedIndex];
+		var optgroup = op.parentNode;
+		alert("selected option text is:  " + op.text + " \noptGroup label is:  " + optgroup.label);
+		
+//		$form=$(".media_form");	
+		var datastring = form.serialize();
+		$.ajax({
+			type: "POST",
+			url: $form.attr('action'),
+			dataType: 'html',
+			data: datastring,
+			success: function(result)
+			{
+				$("authors_div").html(result);
+			}
+		});
+		
+		return false;	
+	}
+		
+//	$(document).ready(function(){
+//		$( ".media_form" ).change(function() {
+//			alert( "Handler for .change() called." );
+//		});
+//	});	
+	</script>
 </head>
 <body>
 
+<!-- USER ATTEMPTED TO UPDATE -->
 {% if updated is not None %}
 <div class="object">
 	{% if updated %}
 		<p>Item was successfully saved.</p>
 	{% else %}
-		<p>Item was not successfully saved.</p>
+		<p>Blast! Something went wrong and the item was not saved.</p>
 	{% endif %}
 </div>
 {% endif %}
 
+<!-- EDIT EXISTING ITEM -->
 {% if item %}
-
 <div class="object">
 	<p>ID: {{ item.id }}</p>
 
@@ -34,18 +66,19 @@
 	</p>
 </div>
 
+<!-- CREATE NEW ITEM -->
 {% elif form %}
-
 <div class="object">
 	<form action="{% url 'new_item' %}" method="post">
 		{% csrf_token %}
 		{{ form.as_p }}
+		<div class="authors_div">{% include authors_template %}</div>
 		<input type="submit" value="Save">
 	</form>
 </div>
 
+<!-- TRYING TO EDIT AN ITEM THAT DOESN'T EXIST -->
 {% else %}
-
 <div class="object">
 	There is no item associated with this item number.
 </div>
@@ -54,9 +87,9 @@
 
 <p> <a href="{% url 'index' %}">Home</a> </p>
 
+<!-- this stuff has to be here for the autocomplete fields to work -->
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-
-{{ form.media }}
+{{ author_form.media }}
 
 </body>
 </html>

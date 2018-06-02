@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from .models import Item, Patron, Author, CheckOut
+from .models import Item, Patron, Author, Authorship, CheckOut
 
 class ItemAdmin(admin.ModelAdmin):
 	fields = ('media_type', 'title', 'authors', 'publication_date', 'catalog_id', 'shelf_location', 'isbn', 'upc', 'lost', 'condition', 'notes')
@@ -12,7 +12,10 @@ class PatronAdmin(admin.ModelAdmin):
 	fields = ('patron_name', 'email')
 
 class AuthorAdmin(admin.ModelAdmin):
-	fields = ('author_name', 'author_type')
+	fields = ('author_name')
+
+class AuthorshipAdmin(admin.ModelAdmin):
+	fields = ('author', 'author_type')
 
 class CheckOutAdmin(admin.ModelAdmin):
 	fields = ('patron', 'item', 'due_date')
@@ -20,4 +23,5 @@ class CheckOutAdmin(admin.ModelAdmin):
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Patron, PatronAdmin)
 admin.site.register(Author, AuthorAdmin)
+admin.site.register(Authorship, AuthorshipAdmin)
 admin.site.register(CheckOut, CheckOutAdmin)
